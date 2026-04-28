@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lemo Pet · 中期答辩</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090B;
+    --surface: #121214;
+    --card: #1C1C1F;
+    --border: rgba(255,255,255,0.08);
+    --amber: #F59E0B;
+    --amber-dim: rgba(245,158,11,0.15);
+    --amber-glow: rgba(245,158,11,0.06);
+    --green: #10B981;
+    --green-dim: rgba(16,185,129,0.12);
+    --blue: #3B82F6;
+    --blue-dim: rgba(59,130,246,0.12);
+    --purple: #8B5CF6;
+    --purple-dim: rgba(139,92,246,0.12);
+    --red: #EF4444;
+    --text: #FAFAF9;
+    --muted: #71717A;
+    --faint: #3F3F46;
+    --font-head: 'Syne', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'DM Mono', 'Fira Mono', monospace;
+    --font-body: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+  }
+
+  /* ── SLIDE CONTAINER ── */
+  #deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 56px 72px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1; transform: translateX(0); pointer-events: all;
+  }
+  .slide.exit-left {
+    opacity: 0; transform: translateX(-60px);
+  }
+
+  /* ── GLOBAL TYPOGRAPHY ── */
+  .slide-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--amber);
+  }
+
+  h1 {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 4.8vw, 64px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  h2 {
+    font-family: var(--font-head);
+    font-size: clamp(26px, 3.2vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(250,250,249,0.75);
+  }
+
+  /* ── ACCENT ELEMENTS ── */
+  .amber { color: var(--amber); }
+  .green { color: var(--green); }
+  .blue  { color: var(--blue); }
+  .purple { color: var(--purple); }
+  .muted { color: var(--muted); }
+  .mono { font-family: var(--font-mono); }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+  }
+  .tag-done   { color: var(--green);  border-color: rgba(16,185,129,0.3);  background: var(--green-dim); }
+  .tag-wip    { color: var(--amber);  border-color: rgba(245,158,11,0.3);  background: var(--amber-dim); }
+  .tag-todo   { color: var(--muted);  border-color: var(--faint);          background: rgba(63,63,70,0.3); }
+  .tag-innov  { color: var(--purple); border-color: rgba(139,92,246,0.3);  background: var(--purple-dim); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .card-sm {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 40px; height: 3px;
+    background: var(--amber);
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 1 · TITLE                */
+  /* ─────────────────────────────── */
+  #s1 {
+    justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(245,158,11,0.07) 0%, transparent 70%);
+  }
+  #s1 .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #s1 .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 1px;
+    background: var(--amber);
+  }
+  #s1 h1 { margin-bottom: 18px; }
+  #s1 h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--amber), #FCD34D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #s1 .sub {
+    font-size: 18px;
+    color: rgba(250,250,249,0.45);
+    margin-bottom: 44px;
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  #s1 .meta {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  #s1 .meta-divider { width: 1px; height: 32px; background: var(--border); }
+  #s1 .meta-item { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  #s1 .meta-item span { display: block; color: var(--text); font-size: 14px; margin-top: 3px; font-family: var(--font-body); }
+  #s1 .dot-grid {
+    position: absolute;
+    right: 72px; top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    grid-template-columns: repeat(8, 20px);
+    gap: 12px;
+    opacity: 0.1;
+  }
+  #s1 .dot-grid div {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+  #s1 .corner-badge {
+    position: absolute;
+    bottom: 48px; right: 72px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 2;
+  }
+  #s1 .tag-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 2 · 问题                 */
+  /* ─────────────────────────────── */
+  #s2 .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 50px 1fr;
+    gap: 0;
+    align-items: stretch;
+    flex: 1;
+    max-height: 400px;
+  }
+  #s2 .vs-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--faint);
+  }
+  .pain-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pain-item .icon { font-size: 26px; margin-bottom: 2px; }
+  .pain-item h4 {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pain-item p { font-size: 13px; line-height: 1.7; }
+  .pain-item.highlight {
+    border-color: rgba(245,158,11,0.35);
+    background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, var(--card) 60%);
+  }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 3 · 架构                 */
+  /* ─────────────────────────────── */
+  #s3 .layer-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .layer {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: border-color 0.2s;
+  }
+  .layer:hover { border-color: rgba(245,158,11,0.4); }
+  .layer-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--amber);
+    min-width: 42px;
+    letter-spacing: 0.05em;
+  }
+  .layer-title {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 210px;
+    color: var(--text);
+  }
+  .layer-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: rgba(250,250,249,0.65);
+    white-space: nowrap;
+  }
+  .chip.hi      { color: var(--amber);  border-color: rgba(245,158,11,0.25);  background: var(--amber-dim); }
+  .chip.hi-blue { color: var(--blue);   border-color: rgba(59,130,246,0.25);  background: var(--blue-dim); }
+  .chip.hi-purple { color: var(--purple); border-color: rgba(139,92,246,0.25); background: var(--purple-dim); }
+  .layer-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 150px;
+    text-align: right;
+  }
+  .layer.l4 { background: rgba(59,130,246,0.04); }
+  .layer.l3 { background: rgba(245,158,11,0.04); }
+  .layer.l2 { background: rgba(16,185,129,0.04); }
+  .layer.l1 { background: rgba(139,92,246,0.04); }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 4 · 硬件                 */
+  /* ─────────────────────────────── */
+  .hw-row {
+    display: grid;
+    grid-template-columns: 110px 190px 1fr 110px;
+    align-items: center;
+    gap: 16px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .hw-row:first-child { border-top: 1px solid var(--border); }
+  .hw-row .role { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .hw-row .part { font-weight: 500; color: var(--text); font-size: 13px; }
+  .hw-row .desc { color: rgba(250,250,249,0.5); font-size: 12px; line-height: 1.5; }
+  .hw-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    padding: 10px 20px 4px;
+    text-transform: uppercase;
+  }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 5 · 语音链路             */
+  /* ─────────────────────────────── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+  .pipe-block {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+  }
+  .pipe-block::after {
+    content: '→';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--amber);
+    font-size: 16px;
+    z-index: 1;
+  }
+  .pipe-block:last-child::after { display: none; }
+  .pipe-block + .pipe-block { margin-left: 24px; }
+  .pipe-num  { font-family: var(--font-mono); font-size: 10px; color: var(--amber); }
+  .pipe-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; }
+  .pipe-tech { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .pipe-block.verified { border-color: rgba(16,185,129,0.3); }
+  .pipe-block.verified .pipe-num { color: var(--green); }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .metric {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .metric .val {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric .label { font-size: 12px; color: var(--muted); }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 6 · 视觉+动作            */
+  /* ─────────────────────────────── */
+  .vision-flow {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr 40px 1fr;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .vf-arrow { display: flex; align-items: center; justify-content: center; color: var(--amber); font-size: 20px; }
+  .vf-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .vf-block .ico { font-size: 30px; }
+  .vf-block h4 { font-family: var(--font-head); font-size: 14px; font-weight: 600; }
+  .vf-block .detail { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+
+  .action-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .action-chip {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: rgba(250,250,249,0.7);
+  }
+  .action-chip .bytes { display: block; font-size: 10px; color: var(--amber); margin-top: 3px; }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 7 · 深度学习             */
+  /* ─────────────────────────────── */
+  .dl-compare {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 40px;
+    flex: 1;
+  }
+  .dl-sep { background: var(--border); align-self: stretch; }
+  .dl-side h3 { font-size: 15px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .dl-step {
+    display: flex;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .dl-step:last-child { border-bottom: none; }
+  .dl-step-num { font-family: var(--font-mono); font-size: 11px; color: var(--amber); min-width: 24px; padding-top: 2px; }
+  .dl-step-body h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .dl-step-body p  { font-size: 12px; color: rgba(250,250,249,0.55); line-height: 1.6; }
+  .innovation-box {
+    background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.03));
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 16px;
+  }
+  .innovation-box h4 { font-size: 12px; color: var(--amber); font-family: var(--font-mono); margin-bottom: 5px; letter-spacing: 0.05em; }
+  .innovation-box p  { font-size: 12px; color: rgba(250,250,249,0.7); }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 8 · MCP 创新层           */
+  /* ─────────────────────────────── */
+  .mcp-diagram {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .mcp-block {
+    border-radius: 14px;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+  }
+  .mcp-block .mcp-ico { font-size: 28px; margin-bottom: 4px; }
+  .mcp-block h4 { font-family: var(--font-head); font-size: 14px; font-weight: 600; }
+  .mcp-block .mcp-sub { font-family: var(--font-mono); font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .mcp-arrow { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; }
+  .mcp-arrow-line { font-size: 18px; color: var(--amber); }
+  .mcp-arrow-label { font-family: var(--font-mono); font-size: 10px; color: var(--amber); text-align: center; letter-spacing: 0.03em; }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .insight-card .ic-label { font-family: var(--font-mono); font-size: 10px; color: var(--amber); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .insight-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .insight-card p { font-size: 12px; color: rgba(250,250,249,0.6); line-height: 1.5; }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 9 · 进度                 */
+  /* ─────────────────────────────── */
+  .progress-table { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .prog-row {
+    display: grid;
+    grid-template-columns: 190px 1fr 70px 110px;
+    align-items: center;
+    gap: 20px;
+    padding: 13px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+  }
+  .prog-row .module { font-family: var(--font-head); font-size: 13px; font-weight: 600; }
+  .prog-bar-wrap { background: rgba(255,255,255,0.04); border-radius: 99px; height: 6px; overflow: hidden; }
+  .prog-bar { height: 100%; border-radius: 99px; }
+  .prog-bar.done { background: var(--green); }
+  .prog-bar.wip  { background: var(--amber); }
+  .prog-bar.todo { background: var(--faint); }
+  .prog-pct { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: right; }
+
+  /* ─────────────────────────────── */
+  /*  SLIDE 10 · 结语                */
+  /* ─────────────────────────────── */
+  #s10 {
+    justify-content: center;
+    background: radial-gradient(ellipse 70% 50% at 30% 50%, rgba(245,158,11,0.06) 0%, transparent 70%);
+  }
+  #s10 .qa-prompt {
+    font-family: var(--font-head);
+    font-size: clamp(30px, 3.8vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 36px;
+    line-height: 1.12;
+  }
+  #s10 .qa-prompt em { font-style: normal; color: var(--amber); }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 44px; }
+  .summary-chip {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: rgba(250,250,249,0.75);
+    letter-spacing: 0.02em;
+  }
+  .summary-chip.key { background: var(--amber-dim); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+  .summary-chip.innov { background: var(--purple-dim); border-color: rgba(139,92,246,0.3); color: var(--purple); }
+
+  /* ── NAV ── */
+  #nav {
+    position: fixed;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    z-index: 100;
+    background: rgba(9,9,11,0.7);
+    backdrop-filter: blur(12px);
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--faint);
+    cursor: pointer;
+    transition: background 0.2s, width 0.2s;
+  }
+  .nav-dot.active { background: var(--amber); width: 20px; border-radius: 3px; }
+
+  #counter {
+    position: fixed;
+    top: 28px; right: 40px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    z-index: 100;
+  }
+  #logo {
+    position: fixed;
+    top: 28px; left: 40px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--amber);
+    z-index: 100;
+  }
+  .slide-num {
+    position: absolute;
+    bottom: 56px; left: 72px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--faint);
+  }
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--amber);
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:10%;"></div>
+<div id="logo">LEMO PET</div>
+<div id="counter">1 / 10</div>
+
+<div id="deck">
+
+  <!-- ─── SLIDE 1: TITLE ─── -->
+  <div class="slide active" id="s1">
+    <div class="eyebrow">毕业设计中期答辩 · 2026</div>
+    <h1>基于深度学习与嵌入式技术的</h1>
+    <h1>智能桌宠<em>人机交互</em>系统设计</h1>
+    <p class="sub">运行在边缘端、具备主动感知能力的情感交互桌面伴侣机器人</p>
+    <div class="tag-row">
+      <span class="tag tag-innov">边缘 AI</span>
+      <span class="tag tag-innov">多模态融合</span>
+      <span class="tag tag-innov">嵌入式系统</span>
+      <span class="tag tag-done">底层链路已贯通</span>
+    </div>
+    <div class="meta">
+      <div class="meta-item">汇报人<span>何乃滔</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">答辩时间<span>2026.04.29</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">项目代号<span>Lemo Pet</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">平台<span>Radxa Cubie A7Z</span></div>
+    </div>
+    <div class="dot-grid">
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </div>
+    <div class="corner-badge">「微笑唤醒 · 语音陪聊 · 实体动作」<br>主动感知 / 自然对话 / 情感联结</div>
+    <div class="slide-num">01</div>
+  </div>
+
+  <!-- ─── SLIDE 2: 问题与动机 ─── -->
+  <div class="slide" id="s2">
+    <div class="slide-label">研究背景与动机</div>
+    <h2>现有智能桌宠的三大痛点</h2>
+    <div class="pain-grid">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="pain-item">
+          <div class="icon">🖼️</div>
+          <h4>缺乏实体存在感</h4>
+          <p>传统桌宠停留在屏幕/App 内，无物理形态，无法感知用户状态，需手动点击触发——始终是"被动工具"。</p>
+        </div>
+        <div class="pain-item">
+          <div class="icon">🤖</div>
+          <h4>交互能力孤立</h4>
+          <p>市面实体机器人（如 AIBO、Loona）或具备视觉、或具备语音，鲜有同时整合主动感知+情感对话+肢体反馈三项能力的低成本方案。</p>
+        </div>
+        <div class="pain-item">
+          <div class="icon">⚡</div>
+          <h4>边缘端算力瓶颈</h4>
+          <p>重型 AI 框架（如 LangChain、大型 VLM）无法在 ARM 嵌入式平台实时运行，导致端侧智能体方案长期空白。</p>
+        </div>
+      </div>
+      <div class="vs-col">→</div>
+      <div class="pain-item highlight" style="justify-content:center;align-items:center;text-align:center;gap:14px;">
+        <div class="icon">🐶</div>
+        <h4 style="font-size:17px;">Lemo Pet：完整情感交互闭环</h4>
+        <p style="font-size:13px;"><span class="amber">对摄像头微笑</span> → 机器人<span class="amber">主动唤醒</span>打招呼<br>→ <span class="amber">全双工语音</span>自然聊天<br>→ 每次回复伴随<span class="amber">摇尾巴</span>等实体动作</p>
+        <div class="divider" style="margin:8px auto 0;"></div>
+        <p style="font-size:12px;color:var(--muted);">主动感知 · 自然对话 · 实体动作<br>三合一 · 纯边缘端运行</p>
+      </div>
+    </div>
+    <div class="slide-num">02</div>
+  </div>
+
+  <!-- ─── SLIDE 3: 系统架构 ─── -->
+  <div class="slide" id="s3">
+    <div class="slide-label">整体设计方案</div>
+    <h2>四层软硬件解耦架构</h2>
+    <div class="layer-stack">
+      <div class="layer l1">
+        <div class="layer-num">LAYER 01</div>
+        <div class="layer-title">灵魂层 · 人格 &amp; 记忆</div>
+        <div class="layer-chips">
+          <span class="chip hi-purple">Hermes Agent</span>
+          <span class="chip">SOUL.md 人格定义文件</span>
+          <span class="chip">FTS5 全文检索长期记忆</span>
+          <span class="chip">跨会话状态持久化</span>
+          <span class="chip">MCP 工具生态接入</span>
+        </div>
+        <div class="layer-note" style="color:rgba(139,92,246,0.7);">下阶段集成</div>
+      </div>
+      <div class="layer l2">
+        <div class="layer-num">LAYER 02</div>
+        <div class="layer-title">感知决策层 · 多模态融合</div>
+        <div class="layer-chips">
+          <span class="chip hi">视觉感知（MediaPipe）</span>
+          <span class="chip hi">语音识别（ASR）</span>
+          <span class="chip">LLM 情绪引擎</span>
+          <span class="chip">asyncio FSM 状态机</span>
+          <span class="chip">三协程并发调度</span>
+        </div>
+        <div class="layer-note" style="color:var(--green);">✓ 核心链路已通</div>
+      </div>
+      <div class="layer l3">
+        <div class="layer-num">LAYER 03</div>
+        <div class="layer-title">MCP 硬件桥接层 · <span style="color:var(--amber)">关键创新</span></div>
+        <div class="layer-chips">
+          <span class="chip hi">pet_serial MCP Server</span>
+          <span class="chip">串口指令语义化封装</span>
+          <span class="chip">do_action("YAOWEIBA")</span>
+          <span class="chip">LLM → 工具调用 → 硬件</span>
+        </div>
+        <div class="layer-note" style="color:var(--amber);">调用延迟 &lt;1ms</div>
+      </div>
+      <div class="layer l4">
+        <div class="layer-num">LAYER 04</div>
+        <div class="layer-title">STM32 实时执行层</div>
+        <div class="layer-chips">
+          <span class="chip hi-blue">FreeRTOS</span>
+          <span class="chip">动作序列执行器</span>
+          <span class="chip">OLED 表情引擎</span>
+          <span class="chip">PID 舵机闭环控制</span>
+          <span class="chip">硬实时保障</span>
+        </div>
+        <div class="layer-note" style="color:var(--blue);">与上位机完全解耦</div>
+      </div>
+    </div>
+    <div class="slide-num">03</div>
+  </div>
+
+  <!-- ─── SLIDE 4: 硬件 ─── -->
+  <div class="slide" id="s4">
+    <div class="slide-label">硬件平台</div>
+    <h2>硬件选型 · BOM 清单</h2>
+    <div style="flex:1;overflow:hidden;">
+      <div class="hw-section-label">上位机（边缘计算主控）</div>
+      <div class="hw-row">
+        <div class="role">主控 SBC</div>
+        <div class="part">Radxa Cubie A7Z</div>
+        <div class="desc">Allwinner A733 · 八核（2×A76@2.0GHz + 6×A55@1.8GHz）· NPU 3 TOPS · WiFi 6 · 65×30mm</div>
+        <span class="tag tag-done">✓ 已到货</span>
+      </div>
+      <div class="hw-row">
+        <div class="role">摄像头</div>
+        <div class="part">Radxa 4K Camera</div>
+        <div class="desc">Sony IMX415 · MIPI CSI · GStreamer pipeline · 1080p@30fps 用于 FaceMesh 推理</div>
+        <span class="tag tag-done">✓ 已验证</span>
+      </div>
+      <div class="hw-row">
+        <div class="role">音频</div>
+        <div class="part">USB 声卡 + 麦克风 / 喇叭</div>
+        <div class="desc">USB-C 转接 · ALSA plughw:1,0 · 16kHz 单声道采集 · 全双工播放</div>
+        <span class="tag tag-done">✓ 已验证</span>
+      </div>
+      <div class="hw-section-label" style="margin-top:8px;">下位机 &amp; 执行器</div>
+      <div class="hw-row">
+        <div class="role">下位机 MCU</div>
+        <div class="part">STM32F103C8T6</div>
+        <div class="desc">ARM Cortex-M3 · FreeRTOS · 串口接收上位机动作指令 · 与上位机完全物理解耦</div>
+        <span class="tag tag-done">✓ 固件已烧录</span>
+      </div>
+      <div class="hw-row">
+        <div class="role">执行器</div>
+        <div class="part">S90 金属舵机 ×4</div>
+        <div class="desc">四足机器狗骨架 · PID 闭环控制 · 摇尾巴 / 趴下 / 立正 / 唤醒动作</div>
+        <span class="tag tag-done">✓ 全部调通</span>
+      </div>
+      <div class="hw-row">
+        <div class="role">显示</div>
+        <div class="part">1.3" OLED</div>
+        <div class="desc">I2C 接口 · 表情状态动画 · 眼睛眨眼效果 · 同步情绪反馈</div>
+        <span class="tag tag-wip">集成中</span>
+      </div>
+      <div class="hw-row">
+        <div class="role">电源</div>
+        <div class="part">1800mAh 锂电池组</div>
+        <div class="desc">有线充电模块 · 可独立移动部署 · 摆脱 USB 供电约束</div>
+        <span class="tag tag-done">✓ 配齐</span>
+      </div>
+    </div>
+    <div class="slide-num">04</div>
+  </div>
+
+  <!-- ─── SLIDE 5: 语音链路 ─── -->
+  <div class="slide" id="s5">
+    <div class="slide-label">已完成工作 · 语音模块</div>
+    <h2>端到端语音对话链路</h2>
+    <div class="pipeline">
+      <div class="pipe-block verified">
+        <div class="pipe-num">① ASR</div>
+        <div class="pipe-name">语音识别</div>
+        <div class="pipe-tech">腾讯云 · 16k_zh<br>固定时长录音 6s<br>端点检测静音截断</div>
+        <span class="tag tag-done" style="margin-top:8px;align-self:flex-start;">✓ 跑通</span>
+      </div>
+      <div class="pipe-block verified">
+        <div class="pipe-num">② LLM</div>
+        <div class="pipe-name">大语言模型</div>
+        <div class="pipe-tech">MiniMax MiniMax-M1<br>HTTP 流式 SSE 输出<br>情绪标签注入 Prompt</div>
+        <span class="tag tag-done" style="margin-top:8px;align-self:flex-start;">✓ 跑通</span>
+      </div>
+      <div class="pipe-block verified">
+        <div class="pipe-num">③ TTS</div>
+        <div class="pipe-name">语音合成</div>
+        <div class="pipe-tech">MiniMax speech-02-turbo<br>WAV 16kHz Mono<br>情感参数动态调节</div>
+        <span class="tag tag-done" style="margin-top:8px;align-self:flex-start;">✓ 跑通</span>
+      </div>
+      <div class="pipe-block verified">
+        <div class="pipe-num">④ ACTION</div>
+        <div class="pipe-name">同步动作触发</div>
+        <div class="pipe-tech">pyserial + asyncio<br>TTS 播放同时触发<br>摇尾巴 / 情绪肢体</div>
+        <span class="tag tag-done" style="margin-top:8px;align-self:flex-start;">✓ 跑通</span>
+      </div>
+    </div>
+    <div class="metric-row">
+      <div class="metric">
+        <div class="val">0.51</div>
+        <div class="label">TTS 实时率 RTF</div>
+      </div>
+      <div class="metric">
+        <div class="val">~0.65s</div>
+        <div class="label">TTS 首字延迟</div>
+      </div>
+      <div class="metric">
+        <div class="val">&lt;2ms</div>
+        <div class="label">串口动作延迟</div>
+      </div>
+      <div class="metric">
+        <div class="val">全异步</div>
+        <div class="label">asyncio 无阻塞</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;padding:13px 20px;background:var(--card);border-radius:10px;border:1px solid var(--border);">
+      <p style="font-family:var(--font-mono);font-size:12px;color:var(--muted);">
+        架构选型：WebSocket（MiniMax wss 接口不稳定）→ 改用 <span class="amber">HTTP 流式 SSE</span>。
+        录音 → 识别 → LLM → TTS 合成 → 播放 + 摇尾巴，全链路一气呵成，LLM 首 token 即触发 TTS。
+      </p>
+    </div>
+    <div class="slide-num">05</div>
+  </div>
+
+  <!-- ─── SLIDE 6: 视觉+动作 ─── -->
+  <div class="slide" id="s6">
+    <div class="slide-label">已完成工作 · 视觉与动作</div>
+    <h2>微笑感知 &amp; 串口动作控制</h2>
+    <div class="vision-flow">
+      <div class="vf-block">
+        <div class="ico">📷</div>
+        <h4>摄像头采集</h4>
+        <div class="detail">GStreamer pipeline<br>1920×1080@30fps<br>resize → 640×360 推理帧</div>
+      </div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-block" style="border-color:rgba(245,158,11,0.3);background:var(--amber-glow);">
+        <div class="ico">😊</div>
+        <h4>MediaPipe FaceMesh</h4>
+        <div class="detail">478 关键点提取<br>嘴角宽/高比 &gt; 2.5<br>→ 判定为微笑（Baseline）</div>
+      </div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-block">
+        <div class="ico">🐾</div>
+        <h4>串口动作触发</h4>
+        <div class="detail">冷却锁 3s 防抖<br>asyncio 安全发送<br>互斥锁防并发写入</div>
+      </div>
+    </div>
+    <div style="margin-bottom:18px;">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-family:var(--font-mono);letter-spacing:0.03em;">预定义动作指令集 · STM32 FreeRTOS 动作队列解析</p>
+      <div class="action-chips">
+        <div class="action-chip">唤醒 <span class="bytes">@ZAI#$</span></div>
+        <div class="action-chip">摇尾巴 <span class="bytes">@YAOWEIBA#$</span></div>
+        <div class="action-chip">趴下 <span class="bytes">@PAXIA#$</span></div>
+        <div class="action-chip">立正 <span class="bytes">@LIZHENG#$</span></div>
+      </div>
+    </div>
+    <div class="card-sm" style="border-color:rgba(245,158,11,0.2);background:var(--amber-glow);">
+      <p style="font-size:13px;">
+        <span class="amber">当前阶段：</span>几何阈值 Baseline 已完整验证。
+        局限性：对亚洲人脸、侧脸、戴眼镜等场景泛化较差，下一张幻灯片介绍基于深度学习的改进方案。
+      </p>
+    </div>
+    <div class="slide-num">06</div>
+  </div>
+
+  <!-- ─── SLIDE 7: 深度学习方案 ─── -->
+  <div class="slide" id="s7">
+    <div class="slide-label">学术创新点一</div>
+    <h2>MediaPipe + MLP 微笑分类器</h2>
+    <div class="dl-compare" style="flex:1;">
+      <div class="dl-side">
+        <h3><span class="tag tag-done" style="margin-right:8px;">Baseline</span> 几何阈值法（当前）</h3>
+        <div class="dl-step">
+          <div class="dl-step-num">01</div>
+          <div class="dl-step-body">
+            <h4>MediaPipe FaceMesh</h4>
+            <p>478 个人脸关键点实时提取，纯 CPU 推理，延迟 &lt;10ms，无需 GPU</p>
+          </div>
+        </div>
+        <div class="dl-step">
+          <div class="dl-step-num">02</div>
+          <div class="dl-step-body">
+            <h4>嘴角比值阈值判断</h4>
+            <p>mouth_width ÷ (mouth_height + ε) &gt; 2.5 即判定为微笑，规则简单直接</p>
+          </div>
+        </div>
+        <div class="dl-step">
+          <div class="dl-step-num">03</div>
+          <div class="dl-step-body">
+            <h4>局限性分析</h4>
+            <p>亚洲面孔嘴角特征差异大，侧脸 / 戴眼镜场景严重误判；硬阈值无法适应个体差异</p>
+          </div>
+        </div>
+      </div>
+      <div class="dl-sep"></div>
+      <div class="dl-side">
+        <h3><span class="tag tag-wip" style="margin-right:8px;">进行中</span> MLP 分类器（目标方案）</h3>
+        <div class="dl-step">
+          <div class="dl-step-num">01</div>
+          <div class="dl-step-body">
+            <h4>自建专属数据集</h4>
+            <p>针对亚洲人脸 / 演示者定制采集，正负样本各 500+，覆盖侧脸、眼镜、光照变化等场景</p>
+          </div>
+        </div>
+        <div class="dl-step">
+          <div class="dl-step-num">02</div>
+          <div class="dl-step-body">
+            <h4>关键点特征向量 → MLP</h4>
+            <p>478×2 坐标归一化 → PCA 降维 → 2 层全连接，模型大小 &lt;100KB，边缘端推理 &lt;10ms</p>
+          </div>
+        </div>
+        <div class="dl-step">
+          <div class="dl-step-num">03</div>
+          <div class="dl-step-body">
+            <h4>滑动窗口投票</h4>
+            <p>最近 5 帧中 ≥4 帧判定为微笑才触发，消除单帧噪声误判，冷却锁防止重复触发</p>
+          </div>
+        </div>
+        <div class="innovation-box">
+          <h4>▸ 论文学术亮点</h4>
+          <p>自建场景定制数据集 + 轻量化 MLP 替代通用 API，是"面向特定场景的模型优化"研究范式，区别于直接调用黑盒表情 API，具有独立学术价值。</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-num">07</div>
+  </div>
+
+  <!-- ─── SLIDE 8: MCP 创新桥接层 ─── -->
+  <div class="slide" id="s8">
+    <div class="slide-label">学术创新点二</div>
+    <h2>MCP 硬件工具桥接层设计</h2>
+    <div class="mcp-diagram">
+      <div class="mcp-block" style="background:var(--blue-dim);border:1px solid rgba(59,130,246,0.25);border-radius:14px;">
+        <div class="mcp-ico">🧠</div>
+        <h4>LLM 决策</h4>
+        <div class="mcp-sub">MiniMax M1<br>理解用户意图<br>情感分析 → 选动作</div>
+      </div>
+      <div class="mcp-arrow">
+        <div class="mcp-arrow-line">→</div>
+        <div class="mcp-arrow-label">MCP tool_call<br>语义化调用</div>
+      </div>
+      <div class="mcp-block" style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.35);border-radius:14px;">
+        <div class="mcp-ico">🔌</div>
+        <h4>pet_serial MCP Server</h4>
+        <div class="mcp-sub">do_action("YAOWEIBA")<br>语义指令 → 串口字节<br>协议封装 @CMD#$</div>
+      </div>
+      <div class="mcp-arrow">
+        <div class="mcp-arrow-line">→</div>
+        <div class="mcp-arrow-label">UART 115200<br>&lt;2ms 延迟</div>
+      </div>
+      <div class="mcp-block" style="background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:14px;">
+        <div class="mcp-ico">🐶</div>
+        <h4>STM32 执行</h4>
+        <div class="mcp-sub">FreeRTOS 动作队列<br>舵机 PID 控制<br>实时肢体反馈</div>
+      </div>
+    </div>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="ic-label">▸ 设计动机</div>
+        <h4>为什么引入 MCP 协议？</h4>
+        <p>将串口硬件指令封装为 LLM 可调用的"工具"，使大模型能通过自然语言逻辑直接控制物理硬件，而无需理解底层协议细节。</p>
+      </div>
+      <div class="insight-card">
+        <div class="ic-label">▸ 工程价值</div>
+        <h4>软硬件解耦的边界清晰</h4>
+        <p>上位机 Python 层仅操作语义动作名称，下位机 STM32 仅解析固定协议帧。MCP Server 是两者的唯一契约接口，便于独立测试与扩展。</p>
+      </div>
+      <div class="insight-card">
+        <div class="ic-label">▸ 学术价值</div>
+        <h4>LLM-Tool-Hardware 新范式</h4>
+        <p>将 MCP 工具调用机制从云端 API 下沉到嵌入式硬件控制场景，是 LLM-as-controller 在边缘侧机器人方向的创新应用。</p>
+      </div>
+      <div class="insight-card" style="border-color:rgba(245,158,11,0.25);background:var(--amber-glow);">
+        <div class="ic-label">▸ 中期阶段策略</div>
+        <h4>asyncio FSM 先行验证</h4>
+        <p>中期用轻量 asyncio 状态机打通底层链路，等底层稳定后将 Hermes Agent 作为"灵魂层"接入，MCP 桥接层保持不变。</p>
+      </div>
+    </div>
+    <div class="slide-num">08</div>
+  </div>
+
+  <!-- ─── SLIDE 9: 进度 ─── -->
+  <div class="slide" id="s9">
+    <div class="slide-label">项目进展</div>
+    <h2>模块完成度总览</h2>
+    <div class="progress-table">
+      <div class="prog-row">
+        <div class="module">硬件选型 &amp; 采购</div>
+        <div class="prog-bar-wrap"><div class="prog-bar done" style="width:100%"></div></div>
+        <div class="prog-pct">100%</div>
+        <span class="tag tag-done">已完成</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">STM32 固件 &amp; 动作库</div>
+        <div class="prog-bar-wrap"><div class="prog-bar done" style="width:100%"></div></div>
+        <div class="prog-pct">100%</div>
+        <span class="tag tag-done">已完成</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">USB 音频链路</div>
+        <div class="prog-bar-wrap"><div class="prog-bar done" style="width:100%"></div></div>
+        <div class="prog-pct">100%</div>
+        <span class="tag tag-done">已完成</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">ASR → LLM → TTS 闭环</div>
+        <div class="prog-bar-wrap"><div class="prog-bar done" style="width:100%"></div></div>
+        <div class="prog-pct">100%</div>
+        <span class="tag tag-done">已完成</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">视觉 Baseline + 串口控制</div>
+        <div class="prog-bar-wrap"><div class="prog-bar done" style="width:100%"></div></div>
+        <div class="prog-pct">100%</div>
+        <span class="tag tag-done">已完成</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">MLP 微笑分类器</div>
+        <div class="prog-bar-wrap"><div class="prog-bar wip" style="width:35%"></div></div>
+        <div class="prog-pct">35%</div>
+        <span class="tag tag-wip">数据采集中</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">Hermes 灵魂层集成</div>
+        <div class="prog-bar-wrap"><div class="prog-bar wip" style="width:15%"></div></div>
+        <div class="prog-pct">15%</div>
+        <span class="tag tag-todo">规划中</span>
+      </div>
+      <div class="prog-row">
+        <div class="module">全链路压测 &amp; 延迟优化</div>
+        <div class="prog-bar-wrap"><div class="prog-bar todo" style="width:0%"></div></div>
+        <div class="prog-pct">0%</div>
+        <span class="tag tag-todo">待启动</span>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px 20px;background:var(--card);border-radius:10px;border:1px solid var(--border);">
+      <p style="font-size:13px;">
+        <span class="amber">下阶段路线：</span>
+        ① MLP 训练替换 Baseline（预计 2–3 天）→
+        ② Hermes Agent 灵魂层接入 →
+        ③ 全链路端到端延迟优化目标 <strong style="color:var(--text)">&lt;1.5s</strong> →
+        ④ 毕设完整演示 Demo
+      </p>
+    </div>
+    <div class="slide-num">09</div>
+  </div>
+
+  <!-- ─── SLIDE 10: 总结 & Q&A ─── -->
+  <div class="slide" id="s10">
+    <div class="qa-prompt">
+      底层已就绪，<br>期待与各位老师<em>深入交流</em> 🐶
+    </div>
+    <div class="summary-chips">
+      <div class="summary-chip key">端到端语音链路 ✓</div>
+      <div class="summary-chip key">串口动作控制 ✓</div>
+      <div class="summary-chip key">视觉 Baseline ✓</div>
+      <div class="summary-chip innov">MCP 硬件桥接层（创新点）</div>
+      <div class="summary-chip innov">MLP 定制分类器（创新点）</div>
+      <div class="summary-chip">MLP 训练 → 进行中</div>
+      <div class="summary-chip">Hermes 集成 → 下阶段</div>
+      <div class="summary-chip">全链路目标延迟 &lt;1.5s</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);font-family:var(--font-mono);">
+      Radxa Cubie A7Z (A733 8-core) · STM32F103C8T6 · FreeRTOS · MiniMax M1 · speech-02-turbo · 腾讯云 ASR · MediaPipe FaceMesh · asyncio
+    </p>
+    <div class="slide-num">10</div>
+  </div>
+
+</div>
+
+<!-- NAVIGATION DOTS -->
+<div id="nav">
+  <div class="nav-dot active" onclick="goTo(0)"></div>
+  <div class="nav-dot" onclick="goTo(1)"></div>
+  <div class="nav-dot" onclick="goTo(2)"></div>
+  <div class="nav-dot" onclick="goTo(3)"></div>
+  <div class="nav-dot" onclick="goTo(4)"></div>
+  <div class="nav-dot" onclick="goTo(5)"></div>
+  <div class="nav-dot" onclick="goTo(6)"></div>
+  <div class="nav-dot" onclick="goTo(7)"></div>
+  <div class="nav-dot" onclick="goTo(8)"></div>
+  <div class="nav-dot" onclick="goTo(9)"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots   = document.querySelectorAll('.nav-dot');
+  const counter = document.getElementById('counter');
+  const progressBar = document.getElementById('progress-bar');
+  let current = 0;
+  let animating = false;
+
+  function goTo(n) {
+    if (animating || n === current) return;
+    animating = true;
+    const dir = n > current ? 1 : -1;
+
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit-left');
+
+    const exitSlide = slides[current];
+    setTimeout(() => {
+      exitSlide.classList.remove('exit-left');
+      if (dir === -1) exitSlide.style.transform = 'translateX(60px)';
+    }, 450);
+
+    if (dir === -1) {
+      slides[n].style.transform = 'translateX(-60px)';
+      slides[n].style.opacity = '0';
+      requestAnimationFrame(() => {
+        slides[n].style.transition = 'none';
+        requestAnimationFrame(() => {
+          slides[n].style.transition = '';
+          slides[n].classList.add('active');
+        });
+      });
+    } else {
+      slides[n].classList.add('active');
+    }
+
+    dots[current].classList.remove('active');
+    dots[n].classList.add('active');
+    current = n;
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+
+    setTimeout(() => {
+      animating = false;
+      slides.forEach(s => s.style.transform = '');
+      slides.forEach(s => s.style.opacity = '');
+      slides.forEach((s, i) => { if (i !== current) s.classList.remove('active'); });
+    }, 500);
+  }
+
+  function next() { if (current < slides.length - 1) goTo(current + 1); }
+  function prev() { if (current > 0) goTo(current - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowUp')    { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowDown')  { e.preventDefault(); next(); }
+  });
+
+  let touchX = 0;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+  });
+</script>
+
+</body>
+</html>
